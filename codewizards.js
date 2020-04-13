@@ -10,7 +10,7 @@ const client = new Discord.Client();
 
 const app = express();
 
-port = 3750;
+port = process.env.PORT;
 
 const hskey = fs.readFileSync(process.env.HTTPS_KEY);
 const hscert = fs.readFileSync(process.env.HTTPS_CERT);
@@ -19,7 +19,10 @@ const expressOptions = {
 	cert: hscert
 };
 
-server = https.createServer(expressOptions, app);
+let server;
+if (hskey && hscert) {
+	server = https.createServer(expressOptions, app);
+}
 
 app.use(function(req, res, next) {
 	res.header('Access-Control-Allow-Origin', '*'); // update to match the domain you will make the request from

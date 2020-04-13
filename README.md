@@ -1,8 +1,4 @@
 
-# **WARNING: THIS PROJECT HAS MOVED**
-
-## **Project has moved to [here](https://github.com/codewizardshq/CWHQDiscordBot).**
-
 # CodeWizardsHQ Verification Bot
 
 This bot is developed and maintained for the CodeWizardsHQ Discord by Razboy20.  
@@ -20,6 +16,7 @@ SECRET_TOKEN=""
 APPLICATION_SECRET=""
 APPLICATION_ID=""
 
+PORT=""
 HTTPS_KEY=""
 HTTPS_CERT=""
 ```
