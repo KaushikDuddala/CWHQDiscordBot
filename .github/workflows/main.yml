@@ -1,0 +1,29 @@
+name: Deploy to AWS
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Deploy to AWS
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v1
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: discord
+          key: ${{ secrets.KEY }}
+          script_stop: true
+          command_timeout: 5m
+          script: |
+            pm2 stop all
+            cd /home/discord/CWHQDiscordBot/
+            git checkout master
+            git pull
+            pm2 start codewizards.js --name "CWHQ Discord Bot"
