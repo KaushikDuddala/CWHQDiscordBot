@@ -12,6 +12,8 @@ const app = express();
 
 port = process.env.PORT;
 
+let server;
+
 if (process.env.HTTPS_CERT && process.env.HTTPS_KEY) {
 	const hskey = fs.readFileSync(process.env.HTTPS_KEY);
 	const hscert = fs.readFileSync(process.env.HTTPS_CERT);
@@ -21,6 +23,8 @@ if (process.env.HTTPS_CERT && process.env.HTTPS_KEY) {
 	};
 
 	server = https.createServer(expressOptions, app);
+} else {
+	server = app;
 }
 
 app.use(function(req, res, next) {
