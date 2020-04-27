@@ -105,11 +105,11 @@ exports.message = async function(client, msg) {
 				result = await result.json();
 				const probability = result.attributeScores.PROFANITY.summaryScore.value;
 				console.log('Profanity probability: ' + probability);
-				if (probability > 0.7) {
+				if (probability > 0.85) {
 					msg.delete();
 					msg
 						.reply(
-							'Please do not use profanity! Probability: ' +
+							'Please do not be profane! Probability: ' +
 								Math.round(probability * 1000) / 10 +
 								'%. Thank you! `@bot`'
 						)
