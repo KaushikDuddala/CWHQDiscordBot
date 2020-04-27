@@ -101,7 +101,7 @@ exports.message = async function(client, msg) {
 			}
 		)
 			.then((result) => {
-				const probability = JSON.parse(result).attributeScores.PROFANITY.summaryScores.value;
+				const probability = result.json().attributeScores.PROFANITY.summaryScores.value;
 				console.log('Profanity probability: ' + probability);
 				if (probability > 0.7) {
 					msg

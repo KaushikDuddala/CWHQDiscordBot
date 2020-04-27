@@ -1,6 +1,6 @@
 {
 	"name": "cwhq-verification-bot",
-	"version": "1.0.2",
+	"version": "1.2.3",
 	"description": "A CodeWizardsHQ Verification Bot for the official discord. ",
 	"main": "codewizards.js",
 	"scripts": {
@@ -10,10 +10,7 @@
 		"type": "git",
 		"url": "git+https://github.com/Razboy20/CWHQVerificationBot.git"
 	},
-	"keywords": [
-		"codewizards",
-		"cwhq"
-	],
+	"keywords": [ "codewizards", "cwhq" ],
 	"author": "Razboy20",
 	"license": "ISC",
 	"bugs": {
