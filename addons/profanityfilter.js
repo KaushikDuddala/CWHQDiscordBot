@@ -1,6 +1,7 @@
 // All code developed by @Razboy20; taken from another project of mine.
 
-fs = require('fs');
+const fs = require('fs');
+const fetch = require('node-fetch');
 
 RubixFilterStatus = false;
 
@@ -77,25 +78,44 @@ blockList = [
 	'arduinko'
 ];
 
-exports.message = function(client, msg) {
+exports.message = async function(client, msg) {
 	if (msg.author.bot) return;
 	if (msg.channel.name === 'admin-log') return;
-	for (
-		var i = 0;
-		JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases.length > i;
-		i++
-	) {
-		removeSaying(
-			JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases[i].toUpperCase(),
-			msg
-		);
-	}
-
-	try {
-		console.log(msg.attachments.first().filename);
-		console.log(msg.attachments.some((val) => val.filename.containsAny(blockList)));
-	} catch (error) {
-		// do nothing
+	if (process.env.PERSPECTIVE_API) {
+		fetch(`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API}`, {
+			headers: {
+				'content-type': 'application/json;charset=UTF-8'
+			},
+			body: JSON.stringify({
+				comment: {
+					text: msg.content
+				},
+				requestedAttributes: {
+					PROFANITY: {}
+					// TOXICITY: {}
+				},
+				languages: [ 'en' ]
+			}),
+			method: 'POST'
+		})
+			.then((result) => {
+				const probability = result.attributeScores['PROFANITY'].summaryScores.value;
+				if (probability > 0.7) {
+					msg
+						.reply(
+							'Please do not use profanity! Probability: ' +
+								Math.round(probability * 1000) / 10 +
+								'%. Thank you! `@bot`'
+						)
+						.then((message) => message.delete({ timeout: 6000 }));
+				}
+			})
+			.catch((err) => console.log(err));
+	} else {
+		const phrases = JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases;
+		for (var i = 0; phrases.length > i; i++) {
+			removeSaying(phrases[i].toUpperCase(), msg);
+		}
 	}
 
 	if (
