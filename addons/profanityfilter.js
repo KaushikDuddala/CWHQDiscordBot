@@ -94,7 +94,6 @@ exports.message = async function(client, msg) {
 					},
 					requestedAttributes: {
 						PROFANITY: {}
-						// TOXICITY: {}
 					},
 					languages: [ 'en' ]
 				}),
@@ -102,7 +101,8 @@ exports.message = async function(client, msg) {
 			}
 		)
 			.then((result) => {
-				const probability = result.attributeScores['PROFANITY'].summaryScores.value;
+				const probability = JSON.parse(result).attributeScores.PROFANITY.summaryScores.value;
+				console.log('Profanity probability: ' + probability);
 				if (probability > 0.7) {
 					msg
 						.reply(
@@ -111,6 +111,12 @@ exports.message = async function(client, msg) {
 								'%. Thank you! `@bot`'
 						)
 						.then((message) => message.delete({ timeout: 6000 }));
+					msg.guild.channels.cache
+						.find((chan) => chan.name === 'admin-log')
+						.send(
+							`Message: \`${msg.content}\` - \`${Math.round(probability * 1000) /
+								10}%\` has been said in ${msg.channel} by ${msg.author}.`
+						);
 				}
 			})
 			.catch((err) => console.log(err));
