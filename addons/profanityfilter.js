@@ -81,6 +81,7 @@ blockList = [
 exports.message = async function(client, msg) {
 	if (msg.author.bot) return;
 	if (msg.channel.name === 'admin-log') return;
+	if (msg.content == '') return;
 	if (process.env.PERSPECTIVE_API_KEY) {
 		fetch(
 			`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`,
@@ -105,6 +106,7 @@ exports.message = async function(client, msg) {
 				const probability = result.attributeScores.PROFANITY.summaryScore.value;
 				console.log('Profanity probability: ' + probability);
 				if (probability > 0.7) {
+					msg.delete();
 					msg
 						.reply(
 							'Please do not use profanity! Probability: ' +

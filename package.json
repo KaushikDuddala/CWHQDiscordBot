@@ -1,6 +1,6 @@
 {
 	"name": "cwhq-verification-bot",
-	"version": "1.2.3",
+	"version": "1.2.4",
 	"description": "A CodeWizardsHQ Verification Bot for the official discord. ",
 	"main": "codewizards.js",
 	"scripts": {
