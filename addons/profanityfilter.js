@@ -81,23 +81,26 @@ blockList = [
 exports.message = async function(client, msg) {
 	if (msg.author.bot) return;
 	if (msg.channel.name === 'admin-log') return;
-	if (process.env.PERSPECTIVE_API) {
-		fetch(`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API}`, {
-			headers: {
-				'content-type': 'application/json;charset=UTF-8'
-			},
-			body: JSON.stringify({
-				comment: {
-					text: msg.content
+	if (process.env.PERSPECTIVE_API_KEY) {
+		fetch(
+			`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`,
+			{
+				headers: {
+					'content-type': 'application/json;charset=UTF-8'
 				},
-				requestedAttributes: {
-					PROFANITY: {}
-					// TOXICITY: {}
-				},
-				languages: [ 'en' ]
-			}),
-			method: 'POST'
-		})
+				body: JSON.stringify({
+					comment: {
+						text: msg.content
+					},
+					requestedAttributes: {
+						PROFANITY: {}
+						// TOXICITY: {}
+					},
+					languages: [ 'en' ]
+				}),
+				method: 'POST'
+			}
+		)
 			.then((result) => {
 				const probability = result.attributeScores['PROFANITY'].summaryScores.value;
 				if (probability > 0.7) {
