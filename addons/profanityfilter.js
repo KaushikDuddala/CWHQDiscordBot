@@ -3,7 +3,7 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-const FilterStatus = true;
+const FilterStatus = { enabled: true, members: [ '477264722991906836' ] };
 
 var exports = module.exports;
 
@@ -134,11 +134,12 @@ exports.message = async function(client, msg) {
 	}
 
 	if (
-		FilterStatus &&
+		FilterStatus.enabled &&
+		msg.author.id.containsAny(FilterStatus.members) &&
 		(((msg.content.includes('https://') || msg.content.includes('http://')) &&
 			msg.content.containsAny(blockList)) ||
 			(msg.attachments.some((val) => val.filename.containsAny(blockList)) &&
-				msg.author.id === '603222450414551061'))
+				msg.author.id.containsAny(FilterStatus.members)))
 	) {
 		msg.delete();
 		msg.reply('no more. Pls.').then((message) => message.delete({ timeout: 3000 }));
