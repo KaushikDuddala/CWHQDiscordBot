@@ -141,7 +141,7 @@ exports.message = async function(client, msg) {
 				msg.author.id === '603222450414551061'))
 	) {
 		msg.delete();
-		msg.reply('no more anime. Pls.').then((message) => message.delete(3000));
+		msg.reply('no more. Pls.').then((message) => message.delete({ timeout: 3000 }));
 	}
 };
 
