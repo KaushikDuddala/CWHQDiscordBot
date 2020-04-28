@@ -3,7 +3,7 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-const FilterStatus = { enabled: true, members: [ '477264722991906836' ] };
+const FilterStatus = { enabled: false, members: [ '477264722991906836' ] };
 
 var exports = module.exports;
 
