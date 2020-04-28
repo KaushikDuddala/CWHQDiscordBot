@@ -3,7 +3,7 @@
 const fs = require('fs');
 const fetch = require('node-fetch');
 
-RubixFilterStatus = false;
+const FilterStatus = true;
 
 var exports = module.exports;
 
@@ -75,7 +75,10 @@ blockList = [
 	'nani',
 	'jojo',
 	'unknown',
-	'arduinko'
+	'arduinko',
+	'tenor',
+	'giphy',
+	'gif'
 ];
 
 exports.message = async function(client, msg) {
@@ -131,7 +134,7 @@ exports.message = async function(client, msg) {
 	}
 
 	if (
-		RubixFilterStatus &&
+		FilterStatus &&
 		(((msg.content.includes('https://') || msg.content.includes('http://')) &&
 			msg.content.containsAny(blockList)) ||
 			(msg.attachments.some((val) => val.filename.containsAny(blockList)) &&
