@@ -18,32 +18,77 @@ exports.init = function(client) {
 							: newPresence.member.user.username} updated their presence to a custom status.`
 					);
 					const status = newPresence.activities[0].state;
-					let checks = [];
-					for (
-						var i = 0;
-						JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases.length > i;
-						i++
-					) {
-						checks.push(
-							checkStatus(
-								JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases[
-									i
-								].toUpperCase(),
-								status,
-								newPresence.member
-							)
-						);
-					}
-
-					// if filter detects nothing, run
-					if (!checks.some((a) => a)) {
-						// check if user has prison role, if so, remove
-						if (newPresence.member.roles.cache.some((role) => role.name === 'Prison')) {
-							newPresence.member.roles.remove(
+					fetch(
+						`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env
+							.PERSPECTIVE_API_KEY}`,
+						{
+							headers: {
+								'content-type': 'application/json;charset=UTF-8'
+							},
+							body: JSON.stringify({
+								comment: {
+									text: msg.content
+								},
+								requestedAttributes: {
+									PROFANITY: {}
+								},
+								languages: [ 'en' ]
+							}),
+							method: 'POST'
+						}
+					).then(async (result) => {
+						result = await result.json();
+						const probability = result.attributeScores.PROFANITY.summaryScore.value;
+						console.log('Profanity probability: ' + probability);
+						if (probability > 0.85) {
+							if (newPresence.member.roles.cache.some((role) => role.name === 'Prison')) return;
+							newPresence.member.roles.add(
 								newPresence.member.guild.roles.cache.find((role) => role.name === 'Prison')
 							);
+
+							newPresence.member.guild.channels.cache
+								.find((chan) => chan.name === 'admin-log')
+								.send(
+									`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${newPresence.member}.`
+								);
+
+							console.log(
+								`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${member.nickname}.`
+							);
+						} else {
+							if (newPresence.member.roles.cache.some((role) => role.name === 'Prison')) {
+								newPresence.member.roles.remove(
+									newPresence.member.guild.roles.cache.find((role) => role.name === 'Prison')
+								);
+							}
 						}
-					}
+					});
+					// let checks = [];
+					// for (
+					// 	var i = 0;
+					// 	JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases.length > i;
+					// 	i++
+					// ) {
+					// 	checks.push(
+					// 		checkStatus(
+					// 			JSON.parse(fs.readFileSync('./addons/resources/profanityFilterWords.json')).phrases[
+					// 				i
+					// 			].toUpperCase(),
+					// 			status,
+					// 			newPresence.member
+					// 		)
+					// 	);
+					// }
+
+					// // if filter detects nothing, run
+					// if (!checks.some((a) => a)) {
+					// 	// check if user has prison role, if so, remove
+					// 	if (newPresence.member.roles.cache.some((role) => role.name === 'Prison')) {
+					// 		newPresence.member.roles.remove(
+					// 			newPresence.member.guild.roles.cache.find((role) => role.name === 'Prison')
+					// 		);
+					// 	}
+					// }
 				}
 			}
 		} catch (error) {
