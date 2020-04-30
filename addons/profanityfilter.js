@@ -27,7 +27,7 @@ exports.init = function(client) {
 							},
 							body: JSON.stringify({
 								comment: {
-									text: msg.content
+									text: status
 								},
 								requestedAttributes: {
 									PROFANITY: {}
