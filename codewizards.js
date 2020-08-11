@@ -5,6 +5,7 @@ const express = require('express');
 const https = require('https');
 const fetch = require('node-fetch');
 const CryptoJS = require('crypto-js');
+const bufferEq = require('buffer-equal-constant-time');
 require('dotenv').config();
 const client = new Discord.Client();
 
@@ -38,8 +39,8 @@ app.get('/', (req, res) => res.send('How have you found this O_O'));
 app.post('/authuser', async (req, res) => {
 	data = req.body;
 	console.log(data);
-	if (!data.code) {
-		res.status(406).send('No code specified');
+	if (!data.id) {
+		res.status(406).send('No user id specified');
 		return;
 	}
 
@@ -52,57 +53,65 @@ app.post('/authuser', async (req, res) => {
 	}
 
 	if (
-		req.headers.authorization !==
-		CryptoJS.HmacSHA512(data.code + req.headers.timestamp, process.env.APPLICATION_SECRET).toString(
-			CryptoJS.enc.Base64
+		bufferEq(
+			new Buffer(req.headers.authorization),
+			new Buffer(
+				CryptoJS.HmacSHA512(data.id + req.headers.timestamp, process.env.APPLICATION_SECRET).toString(
+					CryptoJS.enc.Base64
+				)
+			)
 		)
 	) {
 		res.status(406).send('Authorization failed');
 		return;
 	}
 
-	console.log('Verifying user with code ' + data.code);
+	console.log('Verifying user with code ' + data.id);
 	try {
-		data = {
-			client_id: process.env.APPLICATION_ID,
-			client_secret: process.env.APPLICATION_SECRET,
-			grant_type: 'authorization_code',
-			code: data.code,
-			redirect_uri: 'https://elies.codewizardshq.com/Testing_Folder/discord/redirect.html',
-			scope: 'identify'
-		};
-		headers = {
-			'Content-Type': 'application/x-www-form-urlencoded'
-		};
+		// data = {
+		// 	client_id: process.env.APPLICATION_ID,
+		// 	client_secret: process.env.APPLICATION_SECRET,
+		// 	grant_type: 'authorization_code',
+		// 	code: data.code,
+		// 	redirect_uri: 'https://elies.codewizardshq.com/Testing_Folder/discord/redirect.html',
+		// 	scope: 'identify'
+		// };
+		// headers = {
+		// 	'Content-Type': 'application/x-www-form-urlencoded'
+		// };
 
-		var form_data = new URLSearchParams();
+		// var form_data = new URLSearchParams();
 
-		for (var key in data) {
-			form_data.append(key, data[key]);
-		}
-		const tokenResponse = await fetch('https://discordapp.com/api/oauth2/token', {
-			method: 'POST',
-			body: form_data,
-			headers: headers
-		});
-		console.log(tokenResponse);
+		// for (var key in data) {
+		// 	form_data.append(key, data[key]);
+		// }
+		// const tokenResponse = await fetch('https://discordapp.com/api/oauth2/token', {
+		// 	method: 'POST',
+		// 	body: form_data,
+		// 	headers: headers
+		// });
+		// console.log(tokenResponse);
 
-		if (!tokenResponse.ok) {
-			res.status(406).send('Code invalid/expired');
-		}
-		const tokenInfo = await tokenResponse.json();
+		// if (!tokenResponse.ok) {
+		// 	res.status(406).send('Code invalid/expired');
+		// }
+		// const tokenInfo = await tokenResponse.json();
 
-		if (!tokenInfo.access_token) {
-			res.status(407).send('An error occured.');
+		// if (!tokenInfo.access_token) {
+		// 	res.status(407).send('An error occured.');
+		// 	return;
+		// }
+		// const userResponse = await fetch('https://discordapp.com/api/users/@me', {
+		// 	headers: { Authorization: 'Bearer ' + tokenInfo.access_token }
+		// });
+		// const userData = await userResponse.json();
+		// res.send(userData);
+		const user = client.guilds.cache.get(guildId).members.cache.get(body.id);
+		// console.log(user);
+		if (!user) {
+			res.status(407).send('User does not exist on the CWHQ Server.');
 			return;
 		}
-		const userResponse = await fetch('https://discordapp.com/api/users/@me', {
-			headers: { Authorization: 'Bearer ' + tokenInfo.access_token }
-		});
-		const userData = await userResponse.json();
-		res.send(userData);
-		const user = client.guilds.cache.get(guildId).members.cache.get(userData.id);
-		// console.log(user);
 
 		user.send(createEmbeds(user.user.username).checking).then(function(message) {
 			let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
