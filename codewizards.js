@@ -467,14 +467,14 @@ client.on('messageUpdate', (oldmsg, newmsg) => {
 		console.log(err);
 	}
 });
-/*
+
 client.login(process.env.SECRET_TOKEN).catch(() => {
 	console.error(
 		'\nERROR: Incorrect login details were provided. Please change the client login token to a valid token.\n'
 	);
 	process.exit();
 });
-*/
+
 
 function giveVerifiedRole(id) {
 	const user = client.guilds.cache.get(guildId).members.cache.get(id);
