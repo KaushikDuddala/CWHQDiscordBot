@@ -483,18 +483,11 @@ function giveVerifiedRole(id) {
 		throw new Error("User does not exist")
 	}
 
-	user.send(createEmbeds(user.user.username).checking).then(function(message) {
-		let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
-		client.guilds.cache.get(guildId).members.cache.get(user.id).roles.add(role).catch(console.error);
+	let role = client.guilds.cache.get(guildId).roles.cache.find(role => role.name === giveRoleName);
+	let role2 = client.guilds.cache.get(guildId).roles.cache.find(role => role.name === removeRoleName);
 
-		let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
-		client.guilds.cache.get(guildId).members.cache.get(user.id).roles.remove(role2).catch(console.error);
-		message.edit(createEmbeds(user.user.username).verified);
-		client.guilds.cache
-				.get(guildId)
-				.channels.cache.find((val) => val.name === 'verify-log')
-				.send(createEmbeds(user.user.username).isverified);
-	});
+	client.guilds.cache.get(guildId).members.cache.get(user.id).roles.add(role).catch(console.error);
+	client.guilds.cache.get(guildId).members.cache.get(user.id).roles.remove(role2).catch(console.error);
 }
 
 /**
