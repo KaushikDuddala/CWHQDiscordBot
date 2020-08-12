@@ -4,8 +4,8 @@ const fs = require('fs');
 const express = require('express');
 const https = require('https');
 const fetch = require('node-fetch');
-const CryptoJS = require('crypto-js');
 const bufferEq = require('buffer-equal-constant-time');
+const crypto = require('crypto')
 require('dotenv').config();
 const client = new Discord.Client();
 
@@ -36,37 +36,45 @@ app.use(function(req, res, next) {
 app.use(express.json());
 
 app.get('/', (req, res) => res.send('How have you found this O_O'));
+
 app.post('/authuser', async (req, res) => {
-	data = req.body;
-	console.log(data);
-	if (!data.id) {
-		res.status(406).send('No user id specified');
-		return;
+	const body = req.body;
+	console.log(body);
+	console.log(req.headers)
+
+	const [ts, algo, sig] = req.headers["x-webhook-signature"].split(",")
+	const diff = Math.abs((Date.now()/1000) - parseInt(ts, 10))
+
+	if (isNaN(diff) || diff >= 300) {
+		res.status(400).send("timestamp difference too high")
+		return
 	}
 
-	if (!req.headers.timestamp) {
-		res.status(406).send('No timestamp provided');
-		return;
-	} else if (new Date(new Date()).getTime() - new Date(req.headers.timestamp).getTime() > 60000) {
-		res.status(406).send('Invalid timestamp provided');
-		return;
+	let h
+	try {
+		h = crypto.createHmac(algo, process.env.APPLICATION_SECRET)
+	} catch (e) {
+		res.status(400).send("unsupported message digest " + algo)
+		return
 	}
 
-	if (
-		bufferEq(
-			new Buffer(req.headers.authorization),
-			new Buffer(
-				CryptoJS.HmacSHA512(data.id + req.headers.timestamp, process.env.APPLICATION_SECRET).toString(
-					CryptoJS.enc.Base64
-				)
-			)
-		)
-	) {
-		res.status(406).send('Authorization failed');
-		return;
+	const digest = h.update(ts + JSON.stringify(req.body)).digest("hex")
+
+	const actual = Buffer.from(digest)
+	const expected = Buffer.from(sig)
+
+	if (!bufferEq(actual, expected)) {
+		res.status(401).send("signature verification failed")
+		return
 	}
 
-	console.log('Verifying user with code ' + data.id);
+	if (body.event !== "authorized") {
+		return
+	}
+
+	const {id} = body.data
+
+	console.log('Verifying user with code ' + id);
 	try {
 		// data = {
 		// 	client_id: process.env.APPLICATION_ID,
@@ -106,29 +114,10 @@ app.post('/authuser', async (req, res) => {
 		// });
 		// const userData = await userResponse.json();
 		// res.send(userData);
-		const user = client.guilds.cache.get(guildId).members.cache.get(body.id);
-		// console.log(user);
-		if (!user) {
-			res.status(407).send('User does not exist on the CWHQ Server.');
-			return;
-		}
-
-		user.send(createEmbeds(user.user.username).checking).then(function(message) {
-			let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
-			client.guilds.cache.get(guildId).members.cache.get(user.id).roles.add(role).catch(console.error);
-
-			let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
-			client.guilds.cache.get(guildId).members.cache.get(user.id).roles.remove(role2).catch(console.error);
-			message.edit(createEmbeds(user.user.username).verified);
-			client.guilds.cache
-				.get(guildId)
-				.channels.cache.find((val) => val.name === 'verify-log')
-				.send(createEmbeds(user.user.username).isverified);
-		});
+		giveVerifiedRole(id)
 	} catch (error) {
 		console.log(error);
-		res.status(407).send('An error occured.');
-		return;
+		res.status(407).send('An error occurred.');
 	}
 });
 server.listen(port, () => console.log(`Discord Bot listening on port ${port}!`));
@@ -145,6 +134,11 @@ require('fs').readdirSync(normalizedPath).forEach(function(file) {
 const guildId = process.env.GUILD_ID;
 const giveRoleName = process.env.GIVE_ROLE_NAME;
 const removeRoleName = process.env.REMOVE_ROLE_NAME;
+const studentVerificationURI = process.env.STUDENT_VERIFICATION_URI
+const studentVerificationAuth = Buffer.from(
+		process.env.STUDENT_VERIFICATION_USERNAME + ":" +
+		process.env.STUDENT_VERIFICATION_PASSWORD
+)
 
 addons.forEach((addon) => {
 	if (addon.init) addon.init(client);
@@ -159,6 +153,11 @@ client.on('ready', () => {
 		if (addon.ready) addon.ready();
 	});
 });
+
+client.on('guildMemberAdd', ({data}) => {
+
+
+})
 
 function createEmbeds(name, _id) {
 	if (!_id) _id = null;
@@ -465,10 +464,50 @@ client.on('messageUpdate', (oldmsg, newmsg) => {
 		console.log(err);
 	}
 });
-
+/*
 client.login(process.env.SECRET_TOKEN).catch(() => {
 	console.error(
 		'\nERROR: Incorrect login details were provided. Please change the client login token to a valid token.\n'
 	);
 	process.exit();
 });
+*/
+
+function giveVerifiedRole(id) {
+	const user = client.guilds.cache.get(guildId).members.cache.get(id);
+	// console.log(user);
+	if (!user) {
+		throw new Error("User does not exist")
+	}
+
+	user.send(createEmbeds(user.user.username).checking).then(function(message) {
+		let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
+		client.guilds.cache.get(guildId).members.cache.get(user.id).roles.add(role).catch(console.error);
+
+		let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
+		client.guilds.cache.get(guildId).members.cache.get(user.id).roles.remove(role2).catch(console.error);
+		message.edit(createEmbeds(user.user.username).verified);
+		client.guilds.cache
+				.get(guildId)
+				.channels.cache.find((val) => val.name === 'verify-log')
+				.send(createEmbeds(user.user.username).isverified);
+	});
+}
+
+/**
+ * Check if the given client ID is a student with the CodeWizardsHQ API
+ * @param id
+ */
+function checkVerified(id) {
+	axios
+			.get(studentVerificationURI,
+					{
+						headers: {Authorization: 'Basic ' + studentVerificationAuth},
+						params: {id}
+					})
+			.then(r => {
+				if (r.data.isStudent) {
+					giveVerifiedRole(id)
+				}
+			})
+}
