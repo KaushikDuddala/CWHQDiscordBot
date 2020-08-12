@@ -156,6 +156,9 @@ client.on('ready', () => {
 
 client.on('guildMemberAdd', ({data}) => {
 
+	if (checkVerified(data.id)) {
+		giveVerifiedRole(data.id)
+	}
 
 })
 
