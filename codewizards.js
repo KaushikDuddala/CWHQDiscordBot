@@ -74,7 +74,7 @@ app.post('/authuser', async (req, res) => {
 
 	const { id } = body.data;
 
-	console.log('Verifying user with code ' + id);
+	console.log('Verifying user with id ' + id);
 	try {
 		// data = {
 		// 	client_id: process.env.APPLICATION_ID,
@@ -452,6 +452,10 @@ client.on('guildMemberAdd', (member) => {
 	member.send(
 		'Welcome to the **Official CodeWizardsHQ** Discord! To get started, to go the #hall-of-upgrades channel and type in `!verify`.'
 	);
+
+	if (checkVerified(member.id)) {
+		giveVerifiedRole(member.id);
+	}
 });
 
 client.on('messageUpdate', (oldmsg, newmsg) => {
@@ -473,22 +477,22 @@ client.login(process.env.SECRET_TOKEN).catch(() => {
 });
 
 function giveVerifiedRole(id) {
-	const user = client.guilds.cache.get(guildId).members.cache.get(id);
+	const member = client.guilds.cache.get(guildId).members.cache.get(id);
 	// console.log(user);
-	if (!user) {
+	if (!member) {
 		throw new Error('User does not exist');
 	}
 
 	let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
 	let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
 
-	user.roles.add(role).catch(console.error);
-	user.roles.remove(role2).catch(console.error);
+	member.roles.add(role).catch(console.error);
+	member.roles.remove(role2).catch(console.error);
 
 	client.guilds.cache
 		.get(guildId)
 		.channels.cache.find((val) => val.name === 'verify-log')
-		.send(createEmbeds(user.username).isverified);
+		.send(createEmbeds(member.user.username).isverified);
 }
 
 /**
