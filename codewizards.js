@@ -5,7 +5,7 @@ const express = require('express');
 const https = require('https');
 const fetch = require('node-fetch');
 const bufferEq = require('buffer-equal-constant-time');
-const crypto = require('crypto')
+const crypto = require('crypto');
 require('dotenv').config();
 const client = new Discord.Client();
 
@@ -40,39 +40,39 @@ app.get('/', (req, res) => res.send('How have you found this O_O'));
 app.post('/authuser', async (req, res) => {
 	const body = req.body;
 	console.log(body);
-	console.log(req.headers)
+	console.log(req.headers);
 
-	const [ts, algo, sig] = req.headers["x-webhook-signature"].split(",")
-	const diff = Math.abs((Date.now()/1000) - parseInt(ts, 10))
+	const [ ts, algo, sig ] = req.headers['x-webhook-signature'].split(',');
+	const diff = Math.abs(Date.now() / 1000 - parseInt(ts, 10));
 
 	if (isNaN(diff) || diff >= 300) {
-		res.status(400).send("timestamp difference too high")
-		return
+		res.status(400).send('timestamp difference too high');
+		return;
 	}
 
-	let h
+	let h;
 	try {
-		h = crypto.createHmac(algo, process.env.APPLICATION_SECRET)
+		h = crypto.createHmac(algo, process.env.APPLICATION_SECRET);
 	} catch (e) {
-		res.status(400).send("unsupported message digest " + algo)
-		return
+		res.status(400).send('unsupported message digest ' + algo);
+		return;
 	}
 
-	const digest = h.update(ts + JSON.stringify(req.body)).digest("hex")
+	const digest = h.update(ts + JSON.stringify(req.body)).digest('hex');
 
-	const actual = Buffer.from(digest)
-	const expected = Buffer.from(sig)
+	const actual = Buffer.from(digest);
+	const expected = Buffer.from(sig);
 
 	if (!bufferEq(actual, expected)) {
-		res.status(401).send("signature verification failed")
-		return
+		res.status(401).send('signature verification failed');
+		return;
 	}
 
-	if (body.event !== "authorized") {
-		return
+	if (body.event !== 'authorized') {
+		return;
 	}
 
-	const {id} = body.data
+	const { id } = body.data;
 
 	console.log('Verifying user with code ' + id);
 	try {
@@ -114,7 +114,7 @@ app.post('/authuser', async (req, res) => {
 		// });
 		// const userData = await userResponse.json();
 		// res.send(userData);
-		giveVerifiedRole(id)
+		giveVerifiedRole(id);
 	} catch (error) {
 		console.log(error);
 		res.status(407).send('An error occurred.');
@@ -134,11 +134,10 @@ require('fs').readdirSync(normalizedPath).forEach(function(file) {
 const guildId = process.env.GUILD_ID;
 const giveRoleName = process.env.GIVE_ROLE_NAME;
 const removeRoleName = process.env.REMOVE_ROLE_NAME;
-const studentVerificationURI = process.env.STUDENT_VERIFICATION_URI
+const studentVerificationURI = process.env.STUDENT_VERIFICATION_URI;
 const studentVerificationAuth = Buffer.from(
-		process.env.STUDENT_VERIFICATION_USERNAME + ":" +
-		process.env.STUDENT_VERIFICATION_PASSWORD
-)
+	process.env.STUDENT_VERIFICATION_USERNAME + ':' + process.env.STUDENT_VERIFICATION_PASSWORD
+);
 
 addons.forEach((addon) => {
 	if (addon.init) addon.init(client);
@@ -154,13 +153,11 @@ client.on('ready', () => {
 	});
 });
 
-client.on('guildMemberAdd', ({data}) => {
-
+client.on('guildMemberAdd', ({ data }) => {
 	if (checkVerified(data.id)) {
-		giveVerifiedRole(data.id)
+		giveVerifiedRole(data.id);
 	}
-
-})
+});
 
 function createEmbeds(name, _id) {
 	if (!_id) _id = null;
@@ -475,19 +472,23 @@ client.login(process.env.SECRET_TOKEN).catch(() => {
 	process.exit();
 });
 
-
 function giveVerifiedRole(id) {
 	const user = client.guilds.cache.get(guildId).members.cache.get(id);
 	// console.log(user);
 	if (!user) {
-		throw new Error("User does not exist")
+		throw new Error('User does not exist');
 	}
 
-	let role = client.guilds.cache.get(guildId).roles.cache.find(role => role.name === giveRoleName);
-	let role2 = client.guilds.cache.get(guildId).roles.cache.find(role => role.name === removeRoleName);
+	let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
+	let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
 
-	client.guilds.cache.get(guildId).members.cache.get(user.id).roles.add(role).catch(console.error);
-	client.guilds.cache.get(guildId).members.cache.get(user.id).roles.remove(role2).catch(console.error);
+	user.roles.add(role).catch(console.error);
+	user.roles.remove(role2).catch(console.error);
+
+	client.guilds.cache
+		.get(guildId)
+		.channels.cache.find((val) => val.name === 'verify-log')
+		.send(createEmbeds(user.username).isverified);
 }
 
 /**
@@ -496,14 +497,13 @@ function giveVerifiedRole(id) {
  */
 function checkVerified(id) {
 	axios
-			.get(studentVerificationURI,
-					{
-						headers: {Authorization: 'Basic ' + studentVerificationAuth},
-						params: {id}
-					})
-			.then(r => {
-				if (r.data.isStudent) {
-					giveVerifiedRole(id)
-				}
-			})
+		.get(studentVerificationURI, {
+			headers: { Authorization: 'Basic ' + studentVerificationAuth },
+			params: { id }
+		})
+		.then((r) => {
+			if (r.data.isStudent) {
+				giveVerifiedRole(id);
+			}
+		});
 }
