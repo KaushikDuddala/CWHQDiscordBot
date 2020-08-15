@@ -486,7 +486,7 @@ function giveVerifiedRole(id) {
 	let giveRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
 	let delRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
 
-	if (member.roles.cache.has(giveRole)) {
+	if (member.roles.cache.has((r) => r.name == giveRoleName)) {
 		throw new Error('User already verified/has Apprentice role.');
 	}
 
