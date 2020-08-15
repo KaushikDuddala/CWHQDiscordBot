@@ -483,11 +483,15 @@ function giveVerifiedRole(id) {
 		throw new Error('User does not exist');
 	}
 
-	let role = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
-	let role2 = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
+	let giveRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
+	let delRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
 
-	member.roles.add(role).catch(console.error);
-	member.roles.remove(role2).catch(console.error);
+	if (member.roles.cache.has(giveRole)) {
+		throw new Error('User already verified/has Apprentice role.');
+	}
+
+	member.roles.add(giveRole).catch(console.error);
+	member.roles.remove(delRole).catch(console.error);
 
 	client.guilds.cache
 		.get(guildId)
