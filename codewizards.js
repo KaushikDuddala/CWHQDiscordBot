@@ -486,7 +486,7 @@ function giveVerifiedRole(id) {
 	let giveRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === giveRoleName);
 	let delRole = client.guilds.cache.get(guildId).roles.cache.find((role) => role.name === removeRoleName);
 
-	if (member.roles.cache.has((r) => r.name == giveRoleName)) {
+	if (member.roles.cache.has(giveRole)) {
 		throw new Error('User already verified/has Apprentice role.');
 	}
 
@@ -507,7 +507,8 @@ function checkVerified(id) {
 	axios
 		.get(studentVerificationURI, {
 			headers: { Authorization: 'Basic ' + studentVerificationAuth },
-			params: { id }
+			params: { id },
+			responseType: 'json'
 		})
 		.then((r) => {
 			if (r.data.isStudent) {
