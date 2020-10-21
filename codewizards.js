@@ -452,10 +452,11 @@ client.on('guildMemberAdd', (member) => {
 	member.send(
 		'Welcome to the **Official CodeWizardsHQ** Discord! To get started, to go the #hall-of-upgrades channel and type in `!verify`.'
 	);
-
-	if (checkVerified(member.id)) {
-		giveVerifiedRole(member.id);
-	}
+	setTimeout(() => {
+		if (checkVerified(member.id)) {
+			giveVerifiedRole(member.id);
+		}
+	}, 10000);
 });
 
 client.on('messageUpdate', (oldmsg, newmsg) => {
