@@ -6,6 +6,7 @@ const fetch = require('node-fetch');
 const FilterStatus = { enabled: false, members: [ '477264722991906836' ] };
 
 var exports = module.exports;
+const whitelist = [ 'damn', 'dammit', 'suck' ];
 
 exports.init = function(client) {
 	client.on('presenceUpdate', function(oldPresence, newPresence) {
@@ -130,6 +131,8 @@ exports.message = async function(client, msg) {
 	if (msg.author.bot) return;
 	if (msg.channel.name === 'admin-log') return;
 	if (msg.content == '') return;
+	let sendText = msg.content;
+	whitelist.forEach((item) => (sendText = sendText.toLowerCase().replaceAll(item, '')));
 	if (process.env.PERSPECTIVE_API_KEY) {
 		fetch(
 			`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`,
@@ -139,7 +142,7 @@ exports.message = async function(client, msg) {
 				},
 				body: JSON.stringify({
 					comment: {
-						text: msg.content
+						text: sendText
 					},
 					requestedAttributes: {
 						PROFANITY: {}
