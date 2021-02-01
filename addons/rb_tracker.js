@@ -34,7 +34,7 @@ exports.message = (client, msg) => {
                         tracker = tracker[0]
                     }
                     tracker.rollbacks++;
-                    msg.channel.send("Added a rollback to " + user.tag + "'s count.");
+                    msg.channel.send("Added a rollback to `" + user.user.tag + "`'s count.");
                 } else {
                     msg.channel.send("Invalid user.");
                 }
@@ -47,12 +47,12 @@ exports.message = (client, msg) => {
                 if(user) {
                     var tracker = getTracker(user.id);
                     if(tracker.length == 0) {
-                        msg.channel.send(user.tag + " has had no rollbacks in the past 24 hours.");
+                        msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past 24 hours.");
                     } else {
                         tracker = tracker[0];
                         if(tracker.rollbacks > 0) {
                             tracker.rollbacks--;
-                            msg.channel.send("Removed a rollback to " + user.tag + "'s count.");
+                            msg.channel.send("Removed a rollback to `" + user.user.tag + "`'s count.");
                         } else {
                             tracker.rollbacks = 0;
                             msg.channel.send("Failed to remove rollback. User's count is already 0.");
@@ -69,9 +69,9 @@ exports.message = (client, msg) => {
             if(user) {
                 var tracker = getTracker(user.id);
                 if(tracker.length != 0) {
-                    msg.channel.send(user.tag + " has had " + tracker[0].rollbacks + " rollback(s) in the last 24 hours.");
+                    msg.channel.send("`" + user.user.tag + "` has had " + tracker[0].rollbacks + " rollback(s) in the last 24 hours.");
                 } else {
-                    msg.channel.send(user.tag + " has had no rollbacks in the past 24 hours.");
+                    msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past 24 hours.");
                 }
               
             } else {
