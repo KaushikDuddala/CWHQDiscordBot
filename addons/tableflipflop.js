@@ -1,5 +1,7 @@
 const exports = module.exports;
 
+// By Martin M.
+
 module.exports.message = (client, message) => {
 	// Anti-tableflip
 
