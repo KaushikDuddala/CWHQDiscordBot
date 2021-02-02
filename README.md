@@ -31,3 +31,6 @@ Currently, the bot has the ability to support addons, and to create one, first t
 ### The list of current addons include
 
 - Profanity Filter
+- Clear Command
+- Jokes
+- Table Flip-Flop
