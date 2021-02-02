@@ -24,7 +24,6 @@ module.exports.message = (client, message) => {
 
 	if(message.content.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
 		const msgs = message.channel.messages.fetch({ limit: 2 });
-
 		message.channel.send('(ட °˽°)ட  ︵ ┻━┻').then(m => {
 			setTimeout(() => {
 				m.edit('(╯°□°）╯︵ ┻━┻').then(n => {
