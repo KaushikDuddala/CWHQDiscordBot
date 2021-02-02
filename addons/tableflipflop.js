@@ -23,7 +23,7 @@ module.exports.message = (client, message) => {
 	// Anti-unflip
 
 	if(message.content.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
-		const msgs = message.channel.messages.fetch({ limit: 2 });
+		const msgs = message.channel.messages.fetch({ limit: 2 }).then(m => m);
 
 		message.channel.send('(ட °˽°)ட  ︵ ┻━┻').then(m => {
 			setTimeout(() => {
