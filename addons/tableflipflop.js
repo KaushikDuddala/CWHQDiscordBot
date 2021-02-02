@@ -2,37 +2,36 @@ var exports = module.exports;
 
 // By Martin M.
 
-module.exports.message = (client, message) => {
+exports.message = async (client, message) => {
 	// Anti-tableflip
 
-	if(message.content.endsWith('(╯°□°）╯︵ ┻━┻') && !message.author.bot) {
-		setTimeout(() => {
-			message.channel.send('┬─┬ ╯( ゜-゜╯)').then(m => {
+	if (message.author.bot) return;
+
+	if (message.content.endsWith("(╯°□°）╯︵ ┻━┻")) {
+		setTimeout(async () => {
+			const m = await message.channel.send("┬─┬ ╯( ゜-゜╯)");
+			setTimeout(async () => {
+				const l = await m.edit("┬─┬ ノ( ゜-゜ノ)");
 				setTimeout(() => {
-					m.edit('┬─┬ ノ( ゜-゜ノ)').then(l => {
-						setTimeout(() => {
-							l.edit('┬─┬ ノ( ^ ˽ ^ ノ)');
-						}, 500); // Stage 3
-					});
-				}, 700); // Stage 2
-			});
+					l.edit("┬─┬ ノ( ^ ˽ ^ ノ)");
+				}, 500); // Stage 3
+			}, 700); // Stage 2
 		}, 200); // Stage 1
 	}
 
-
 	// Anti-unflip
 
-	if(message.content.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
-		message.channel.send('(ட °˽°)ட  ︵ ┻━┻').then(m => {
-			setTimeout(() => {
-				m.edit('(╯°□°）╯︵ ┻━┻').then(n => {
-					const msgs = message.channel.messages.cache;
+	if (message.content.endsWith("┬─┬ ノ( ゜-゜ノ)")) {
+		const msgs = await message.channel.messages.fetch({ limit: 2 });
 
-					if(msgs.last().content.includes(':rock:')){
-						msgs.last().delete();
-					}
-				})
-			}, 400); // Stage 2
-		}); // Stage 1
+		const m = await message.channel.send("(ட °˽°)ட  ︵ ┻━┻");
+
+		setTimeout(async () => {
+			await m.edit("(╯°□°）╯︵ ┻━┻");
+			if (msgs.last().content.includes(":rock:")) {
+				msgs.last().delete();
+			}
+		}, 400); // Stage 2
+		// Stage 1
 	}
 };
