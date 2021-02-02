@@ -23,11 +23,11 @@ module.exports.message = (client, message) => {
 	// Anti-unflip
 
 	if(message.content.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
-		const msgs = message.channel.messages.fetch({ limit: 2 }).then(m => m);
-
 		message.channel.send('(ட °˽°)ட  ︵ ┻━┻').then(m => {
 			setTimeout(() => {
 				m.edit('(╯°□°）╯︵ ┻━┻').then(n => {
+					const msgs = message.channel.messages.cache;
+
 					if(msgs.last().content.includes(':rock:')){
 						msgs.last().delete();
 					}
