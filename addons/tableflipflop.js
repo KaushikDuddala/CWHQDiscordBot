@@ -28,7 +28,8 @@ exports.message = async (client, message) => {
 
 		setTimeout(async () => {
 			await m.edit("(╯°□°）╯︵ ┻━┻");
-			if (msgs.last().content.includes(":rock:")) {
+			console.log(msgs.last().content);
+			if (msgs.last().content.includes("🪨")) {
 				msgs.last().delete();
 			}
 		}, 400); // Stage 2
