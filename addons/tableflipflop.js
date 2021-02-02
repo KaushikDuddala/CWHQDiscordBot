@@ -5,7 +5,7 @@ var exports = module.exports;
 module.exports.message = (client, message) => {
 	// Anti-tableflip
 
-	if(message.endsWith('(╯°□°）╯︵ ┻━┻') && !message.author.bot) {
+	if(message.content.endsWith('(╯°□°）╯︵ ┻━┻') && !message.author.bot) {
 		setTimeout(() => {
 			message.channel.send('┬─┬ ╯( ゜-゜╯)').then(m => {
 				setTimeout(() => {
@@ -22,7 +22,7 @@ module.exports.message = (client, message) => {
 
 	// Anti-unflip
 
-	if(message.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
+	if(message.content.endsWith('┬─┬ ノ( ゜-゜ノ)') && !message.author.bot) {
 		message.channel.send('(ட °˽°)ட  ︵ ┻━┻').then(m => {
 			setTimeout(() => {
 				m.edit('(╯°□°）╯︵ ┻━┻');
