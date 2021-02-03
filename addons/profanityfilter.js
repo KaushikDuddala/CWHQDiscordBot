@@ -6,12 +6,12 @@ const fetch = require("node-fetch");
 const FilterStatus = { enabled: false, members: ["477264722991906836"] };
 
 var exports = module.exports;
-const whitelist = ["damn", "dammit", "suck"];
+const whitelist = ["damn", "dammit", "suck", "cursed", "idiot"];
 
 exports.init = function (client) {
     client.on("presenceUpdate", function (oldPresence, newPresence) {
         try {
-            if (newPresence.activities.some((val) => val.hasOwnProperty("type"))) {
+            if (newPresence.activities.some(val => val.hasOwnProperty("type"))) {
                 if (newPresence.activities[0].type === "CUSTOM_STATUS") {
                     console.log(
                         `User ${
@@ -33,22 +33,22 @@ exports.init = function (client) {
                             languages: ["en"],
                         }),
                         method: "POST",
-                    }).then(async (result) => {
+                    }).then(async result => {
                         result = await result.json();
                         const probability = result.attributeScores.PROFANITY.summaryScore.value;
                         console.log("Profanity probability: " + probability);
                         if (probability > 0.85) {
-                            if (newPresence.member.roles.cache.some((role) => role.name === "Prison")) return;
-                            newPresence.member.roles.add(newPresence.member.guild.roles.cache.find((role) => role.name === "Prison"));
+                            if (newPresence.member.roles.cache.some(role => role.name === "Prison")) return;
+                            newPresence.member.roles.add(newPresence.member.guild.roles.cache.find(role => role.name === "Prison"));
 
                             newPresence.member.guild.channels.cache
-                                .find((chan) => chan.name === "admin-log")
+                                .find(chan => chan.name === "admin-log")
                                 .send(`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${newPresence.member}.`);
 
                             console.log(`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${member.nickname}.`);
                         } else {
-                            if (newPresence.member.roles.cache.some((role) => role.name === "Prison")) {
-                                newPresence.member.roles.remove(newPresence.member.guild.roles.cache.find((role) => role.name === "Prison"));
+                            if (newPresence.member.roles.cache.some(role => role.name === "Prison")) {
+                                newPresence.member.roles.remove(newPresence.member.guild.roles.cache.find(role => role.name === "Prison"));
                             }
                         }
                     });
@@ -121,7 +121,7 @@ exports.message = async function (client, msg) {
     if (msg.content == "") return;
     let sendText = msg.content;
     if (!sendText) return;
-    whitelist.forEach((item) => {
+    whitelist.forEach(item => {
         sendText = sendText.toLowerCase().replace(item, "");
     });
     if (process.env.PERSPECTIVE_API_KEY) {
@@ -140,7 +140,7 @@ exports.message = async function (client, msg) {
             }),
             method: "POST",
         })
-            .then(async (result) => {
+            .then(async result => {
                 result = await result.json();
                 const probability = result.attributeScores.PROFANITY.summaryScore.value;
                 console.log("Profanity probability: " + probability);
@@ -148,9 +148,9 @@ exports.message = async function (client, msg) {
                     msg.delete();
                     msg.reply(
                         "Please do not be profane! Probability: " + Math.round(probability * 1000) / 10 + "%. Thank you! `@bot`"
-                    ).then((message) => message.delete({ timeout: 6000 }));
+                    ).then(message => message.delete({ timeout: 6000 }));
                     msg.guild.channels.cache
-                        .find((chan) => chan.name === "admin-log")
+                        .find(chan => chan.name === "admin-log")
                         .send(
                             `Message: \`${msg.content}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
                                 msg.author
@@ -158,7 +158,7 @@ exports.message = async function (client, msg) {
                         );
                 }
             })
-            .catch((err) => console.log(err));
+            .catch(err => console.log(err));
     } else {
         const phrases = JSON.parse(fs.readFileSync("./addons/resources/profanityFilterWords.json")).phrases;
         for (var i = 0; phrases.length > i; i++) {
@@ -170,10 +170,10 @@ exports.message = async function (client, msg) {
         FilterStatus.enabled &&
         msg.author.id.containsAny(FilterStatus.members) &&
         (((msg.content.includes("https://") || msg.content.includes("http://")) && msg.content.containsAny(blockList)) ||
-            (msg.attachments.some((val) => val.filename.containsAny(blockList)) && msg.author.id.containsAny(FilterStatus.members)))
+            (msg.attachments.some(val => val.filename.containsAny(blockList)) && msg.author.id.containsAny(FilterStatus.members)))
     ) {
         msg.delete();
-        msg.reply("no more. Pls.").then((message) => message.delete({ timeout: 3000 }));
+        msg.reply("no more. Pls.").then(message => message.delete({ timeout: 3000 }));
     }
 };
 
@@ -188,10 +188,10 @@ const removeSaying = function (saying, msg) {
             console.log("--ERROR in erasing filtered text in guild: " + msg.guild.name);
         });
 
-        msg.reply("Please do not say that word! Thank you! `@bot`").then((message) => message.delete({ timeout: 6000 }));
+        msg.reply("Please do not say that word! Thank you! `@bot`").then(message => message.delete({ timeout: 6000 }));
 
         msg.guild.channels.cache
-            .find((chan) => chan.name === "admin-log")
+            .find(chan => chan.name === "admin-log")
             .send(`Message: \`${saying}\` - \`${msg.content}\` has been said in ${msg.channel} by ${msg.author}.`);
 
         console.log(
@@ -211,11 +211,11 @@ const removeSaying = function (saying, msg) {
 
 const checkStatus = function (saying, status, member) {
     if (status.toUpperCase().includes(saying)) {
-        if (member.roles.cache.some((role) => role.name === "Prison")) return true;
-        member.roles.add(member.guild.roles.cache.find((role) => role.name === "Prison"));
+        if (member.roles.cache.some(role => role.name === "Prison")) return true;
+        member.roles.add(member.guild.roles.cache.find(role => role.name === "Prison"));
 
         member.guild.channels.cache
-            .find((chan) => chan.name === "admin-log")
+            .find(chan => chan.name === "admin-log")
             .send(`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${member}.`);
 
         console.log(`Status: \`${saying}\` - \`${status}\` has been detected in the custom status of ${member.nickname}.`);
