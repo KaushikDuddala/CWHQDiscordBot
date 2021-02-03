@@ -50,7 +50,7 @@ function clearRollbacks(args) {
     return "";
 }
 async function getPlayerRollbacks(message, player, handleEvents = true) {
-    if (!player) return "Invalid syntax. Check `!rb help` for information.";
+    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
 
     let result;
 
@@ -66,10 +66,13 @@ async function getPlayerRollbacks(message, player, handleEvents = true) {
         await msg.react("⬇️");
         await msg.react("⬆️");
 
-        const collector = msg.createReactionCollector((r, u) => (r.emoji.name == "⬇️" || r.emoji.name == "⬆️") && !u.bot);
+        const collector = msg.createReactionCollector(
+            (r, u) =>
+                (r.emoji.name == "⬇️" || r.emoji.name == "⬆️") &&
+                !u.bot &&
+                r.message.guild.member(u).roles.cache.some(r => r.id == "765034419509526549")
+        );
         collector.on("collect", async (reaction, user) => {
-            if (!u.roles.cache.some(r => r.id == "765034419509526549")) return;
-
             if (reaction.emoji.name == "⬇️") {
                 trackerHelper(player, -1);
             } else {

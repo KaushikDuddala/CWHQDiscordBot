@@ -13,30 +13,31 @@ exports.init = function (client) {
         try {
             if (newPresence.activities.some(val => val.hasOwnProperty("type"))) {
                 if (newPresence.activities[0].type === "CUSTOM_STATUS") {
-                    console.log(
-                        `User ${
-                            newPresence.member.nickname ? newPresence.member.nickname : newPresence.member.user.username
-                        } updated their presence to a custom status.`
-                    );
+                    // console.log(
+                    //     `User ${
+                    //         newPresence.member.nickname ? newPresence.member.nickname : newPresence.member.user.username
+                    //     } updated their presence to a custom status.`
+                    // );
                     const status = newPresence.activities[0].state;
                     fetch(`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`, {
                         headers: {
-                            "content-type": "application/json;charset=UTF-8",
+                            "content-type": "application/json;charset=UTF-8"
                         },
                         body: JSON.stringify({
                             comment: {
-                                text: status,
+                                text: status
                             },
                             requestedAttributes: {
-                                PROFANITY: {},
+                                PROFANITY: {}
                             },
-                            languages: ["en"],
+                            languages: ["en"]
                         }),
-                        method: "POST",
+                        method: "POST"
                     }).then(async result => {
                         result = await result.json();
+                        if (!result.attributeScores) return;
                         const probability = result.attributeScores.PROFANITY.summaryScore.value;
-                        console.log("Profanity probability: " + probability);
+                        // console.log("Profanity probability: " + probability);
                         if (probability > 0.85) {
                             if (newPresence.member.roles.cache.some(role => role.name === "Prison")) return;
                             newPresence.member.roles.add(newPresence.member.guild.roles.cache.find(role => role.name === "Prison"));
@@ -112,7 +113,7 @@ blockList = [
     "arduinko",
     "tenor",
     "giphy",
-    "gif",
+    "gif"
 ];
 
 exports.message = async function (client, msg) {
@@ -127,23 +128,24 @@ exports.message = async function (client, msg) {
     if (process.env.PERSPECTIVE_API_KEY) {
         fetch(`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`, {
             headers: {
-                "content-type": "application/json;charset=UTF-8",
+                "content-type": "application/json;charset=UTF-8"
             },
             body: JSON.stringify({
                 comment: {
-                    text: sendText,
+                    text: sendText
                 },
                 requestedAttributes: {
-                    PROFANITY: {},
+                    PROFANITY: {}
                 },
-                languages: ["en"],
+                languages: ["en"]
             }),
-            method: "POST",
+            method: "POST"
         })
             .then(async result => {
                 result = await result.json();
+                if (!result.attributeScores) return;
                 const probability = result.attributeScores.PROFANITY.summaryScore.value;
-                console.log("Profanity probability: " + probability);
+                // console.log("Profanity probability: " + probability);
                 if (probability > 0.85) {
                     msg.delete();
                     msg.reply(
@@ -179,7 +181,7 @@ exports.message = async function (client, msg) {
 
 exports.messageEdit = function (client, oldmsg, newmsg) {
     exports.message(client, newmsg);
-    console.log("MESSAGE EDITED: " + newmsg.content);
+    // console.log("MESSAGE EDITED: " + newmsg.content);
 };
 
 const removeSaying = function (saying, msg) {
