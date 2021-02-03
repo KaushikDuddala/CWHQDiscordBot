@@ -32,5 +32,6 @@ Currently, the bot has the ability to support addons, and to create one, first t
 
 - **Profanity Filter** by Razboy20
 - **Table FlipFlop** by Martin M.
-- **Jokes Addon by** Qursch
-- **Clear Command by** Razboy20
+- **Jokes Addon** by Qursch
+- **Clear Command** by Razboy20
+- **Definition Command** by Martin M.
