@@ -1,2 +1,7 @@
 {
+<<<<<<< HEAD
 }
+=======
+	"prettier.useTabs": false
+}
+>>>>>>> rb-tracker
