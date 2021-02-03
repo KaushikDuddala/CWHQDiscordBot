@@ -4,6 +4,11 @@ const rule = (new schedule.RecurrenceRule().hour = 0);
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
 
+const fs = require("fs");
+if (!fs.existsSync("db")) {
+    fs.mkdirSync("db");
+}
+
 const adapter = new FileSync("./db/rollbacks.json");
 const trackers = low(adapter);
 
