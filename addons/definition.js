@@ -13,8 +13,7 @@ module.exports.message = (client, message) => {
 
 	const word = args[0].toLowerCase();
 
-	https
-		.get(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (res) => {
+	https.get(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, (res) => {
 			let data = "";
 
 			res.on("data", (chunk) => {
