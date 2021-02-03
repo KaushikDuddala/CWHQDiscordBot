@@ -66,10 +66,10 @@ async function getPlayerRollbacks(message, player, handleEvents = true) {
         await msg.react("⬇️");
         await msg.react("⬆️");
 
-        const collector = msg.createReactionCollector(
-            (r, u) => (r.emoji.name == "⬇️" || r.emoji.name == "⬆️") && !u.bot && u.roles.cache.some(r => r.id == "765034419509526549")
-        );
+        const collector = msg.createReactionCollector((r, u) => (r.emoji.name == "⬇️" || r.emoji.name == "⬆️") && !u.bot);
         collector.on("collect", async (reaction, user) => {
+            if (!u.roles.cache.some(r => r.id == "765034419509526549")) return;
+
             if (reaction.emoji.name == "⬇️") {
                 trackerHelper(player, -1);
             } else {
