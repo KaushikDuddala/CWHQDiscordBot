@@ -27,8 +27,7 @@ module.exports.message = (client, message) => {
 
 			let embed = {
 				color: Math.floor(Math.random() * 16777215) + 1,
-				title: `**Word**: ${result.word}`,
-				description: `**Pronunciation**: *${result.phonetics[0].text.replace('\\', '').replace('/', '')}*\n**Meanings:**`,
+				title: `**Word**: ${result.word}\n**Pronunciation**: *${result.phonetics[0].text.replace('\\', '').replace('/', '')}*\n**Meanings:**`,
 				fields: result.meanings.map(meaning => {
 					return {
 						name: `**Part of Speech:** ${meaning.partOfSpeech}`,
