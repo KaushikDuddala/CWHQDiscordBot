@@ -8,6 +8,7 @@ module.exports.message = (client, message) => {
 	const args = message.content.split(' ').slice(1);
 
 	if(!(message.content.toLowerCase().startsWith(prefix) && aliases.includes(command))) return;
+	if(args.length == 0) return message.reply('Please provide a word');
 	if(args.length > 1) return message.reply('Please provide only one word');
 
 	const word = args[0].toLowerCase();
