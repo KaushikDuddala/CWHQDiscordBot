@@ -41,7 +41,9 @@ module.exports.message = (client, message) => {
                     }),
                 };
 
-                return message.reply({ embed });
+                return message.reply({ embed }).then(() => {
+                    message.channel.send(new Discord.MessageAttachment(result.phonetics[0].audio, "word.mp3"));
+                })
             });
         })
         .on("error", err => {
