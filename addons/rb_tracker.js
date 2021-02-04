@@ -1,5 +1,4 @@
 const schedule = require("node-schedule");
-const rule = (new schedule.RecurrenceRule().hour = 0);
 
 const low = require("lowdb");
 const FileSync = require("lowdb/adapters/FileSync");
@@ -14,15 +13,13 @@ const trackers = low(adapter);
 
 trackers.defaults({}).write();
 
-// const trackers = new Map();
-
-schedule.scheduleJob(rule, () => {
+schedule.scheduleJob("0 0 * * *", () => {
     adapter.write({});
 });
 
 class Tracker {
-    constructor(userid) {
-        this.id = userid;
+    constructor(player) {
+        this.id = player;
         this.rollbacks = 0;
     }
 }
@@ -41,13 +38,42 @@ function trackerHelper(player, value) {
 }
 
 function addRollback(args) {
-    return "";
+    const player = args[0];
+
+    trackerHelper(player, 1);
+
+    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
+
+    if (trackers.get(player).value()) {
+        const tracker = trackers.get(player).value();
+        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
+    } else {
+        return `Player \`${player}\` has had no rollbacks in the last 24 hours.`;
+    }
 }
 function removeRollback(args) {
-    return "";
+    const player = args[0];
+
+    trackerHelper(player, -1);
+
+    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
+
+    if (trackers.get(player).value()) {
+        const tracker = trackers.get(player).value();
+        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
+    } else {
+        return `Player \`${player}\` has had no rollbacks in the last 24 hours.`;
+    }
 }
 function clearRollbacks(args) {
-    return "";
+    const player = args[0];
+
+    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
+
+    if (trackers.get(player).value()) {
+        trackers.set(player, undefined).write();
+    }
+    return `Cleared rollbacks from player \`${player}\`.`;
 }
 async function getPlayerRollbacks(message, player, handleEvents = true) {
     if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
@@ -130,15 +156,15 @@ module.exports.message = async (client, msg) => {
                             value: "Retrieves the number of rollbacks that a specified player currently has."
                         },
                         {
-                            name: "~~!rb add <player> [amount]~~",
+                            name: "!rb add <player> [amount]",
                             value: "Adds a specified amount of rollbacks to a player."
                         },
                         {
-                            name: "~~!rb remove <player> [amount]~~",
+                            name: "!rb remove <player> [amount]",
                             value: "Subtracts a specified amount of rollbacks to a player. (Will cap at 0 rollbacks)"
                         },
                         {
-                            name: "~~!rb clear <player>~~",
+                            name: "!rb clear <player>",
                             value: "Removes a player from the database, and as such setting their rollback count to 0."
                         },
                         {
