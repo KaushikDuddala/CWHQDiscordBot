@@ -114,70 +114,83 @@ async function getPlayerRollbacks(message, player, handleEvents = true) {
 
 module.exports.message = async (client, msg) => {
     if (msg.author.bot) return;
-    if (!msg.member.roles.cache.some(r => r.id == "765034419509526549")) return;
-
     let args = msg.content.toLowerCase().split(" ");
-    if (args[0] == "!rb") {
-        args.shift();
 
-        if (args.length > 0 && args[0] != "help") {
-            const cmd = args[0];
+    if (args[0] != "!rb") return;
+    args.shift();
 
-            switch (cmd) {
-                case "add":
-                    args.shift();
-                    msg.channel.send(addRollback(args));
-                    break;
+    if (!msg.member.roles.cache.some(r => r.id == "765034419509526549")) {
+        switch (args[0]) {
+            case "add":
+            case "remove":
+            case "clear":
+            case "help":
+                msg.react("⚠️");
+                return;
 
-                case "remove":
-                    args.shift();
-                    msg.channel.send(removeRollback(args));
-                    break;
-
-                case "clear":
-                    args.shift();
-                    msg.channel.send(clearRollbacks(args));
-                    break;
-
-                default:
-                    getPlayerRollbacks(msg, args[0]);
-                    break;
-            }
-        } else {
-            msg.channel.send({
-                embed: {
-                    title: "Rollback Command Help",
-                    description:
-                        "Rollbacks reset every day at midnight.\n\nKeep in mind that players are **NOT** discord users, and as such do not use a mention to add a rollback.\n\n__**Commands:**__",
-                    color: 10831812,
-                    fields: [
-                        {
-                            name: "!rb <player>",
-                            value: "Retrieves the number of rollbacks that a specified player currently has."
-                        },
-                        {
-                            name: "!rb add <player> [amount]",
-                            value: "Adds a specified amount of rollbacks to a player."
-                        },
-                        {
-                            name: "!rb remove <player> [amount]",
-                            value: "Subtracts a specified amount of rollbacks to a player. (Will cap at 0 rollbacks)"
-                        },
-                        {
-                            name: "!rb clear <player>",
-                            value: "Removes a player from the database, and as such setting their rollback count to 0."
-                        },
-                        {
-                            name: "!rb",
-                            value: "Shows this help menu."
-                        }
-                    ]
-                }
-            });
+            default:
+                getPlayerRollbacks(msg, args[0]);
+                return;
         }
-
-        return;
     }
+
+    if (args.length > 0 && args[0] != "help") {
+        const cmd = args[0];
+
+        switch (cmd) {
+            case "add":
+                args.shift();
+                msg.channel.send(addRollback(args));
+                break;
+
+            case "remove":
+                args.shift();
+                msg.channel.send(removeRollback(args));
+                break;
+
+            case "clear":
+                args.shift();
+                msg.channel.send(clearRollbacks(args));
+                break;
+
+            default:
+                getPlayerRollbacks(msg, args[0]);
+                break;
+        }
+    } else {
+        msg.channel.send({
+            embed: {
+                title: "Rollback Command Help",
+                description:
+                    "Rollbacks reset every day at midnight.\n\nKeep in mind that players are **NOT** discord users, and as such do not use a mention to add a rollback.\n\n__**Commands:**__",
+                color: 10831812,
+                fields: [
+                    {
+                        name: "!rb <player>",
+                        value: "Retrieves the number of rollbacks that a specified player currently has."
+                    },
+                    {
+                        name: "!rb add <player> [amount]",
+                        value: "Adds a specified amount of rollbacks to a player."
+                    },
+                    {
+                        name: "!rb remove <player> [amount]",
+                        value: "Subtracts a specified amount of rollbacks to a player. (Will cap at 0 rollbacks)"
+                    },
+                    {
+                        name: "!rb clear <player>",
+                        value: "Removes a player from the database, and as such setting their rollback count to 0."
+                    },
+                    {
+                        name: "!rb",
+                        value: "Shows this help menu."
+                    }
+                ]
+            }
+        });
+    }
+
+    return;
 };
 
 // exports.message = (client, msg) => {
