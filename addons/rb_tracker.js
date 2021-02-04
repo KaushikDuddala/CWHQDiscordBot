@@ -113,13 +113,13 @@ async function getPlayerRollbacks(message, player, handleEvents = true) {
 }
 
 module.exports.message = async (client, msg) => {
-    if (msg.author.bot) return;
+    // if (msg.author.bot) return;
     let args = msg.content.toLowerCase().split(" ");
 
     if (args[0] != "!rb") return;
     args.shift();
 
-    if (!msg.member.roles.cache.some(r => r.id == "765034419509526549")) {
+    if (!msg.member.roles.cache.some(r => r.id == "765034419509526549") || msg.author.bot) {
         switch (args[0]) {
             case "add":
             case "remove":
