@@ -40,7 +40,7 @@ function trackerHelper(player, value) {
 function addRollback(args) {
     const player = args[0];
 
-    trackerHelper(player, Math.abs(args[1] ?? 1));
+    trackerHelper(player, Math.abs(args[1] ? args[1] : 1));
 
     if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
 
@@ -54,7 +54,7 @@ function addRollback(args) {
 function removeRollback(args) {
     const player = args[0];
 
-    trackerHelper(player, Math.abs(args[1] ?? 1) * -1);
+    trackerHelper(player, Math.abs(args[1] ? args[1] : 1) * -1);
 
     if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
 
