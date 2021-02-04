@@ -125,6 +125,8 @@ module.exports.message = async (client, msg) => {
             case "remove":
             case "clear":
             case "help":
+            case null:
+            case undefined:
                 msg.react("⚠️");
                 return;
 
