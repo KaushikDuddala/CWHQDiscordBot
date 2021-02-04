@@ -40,10 +40,9 @@ function trackerHelper(player, value) {
 function addRollback(args) {
     const player = args[0];
 
+    if (!player || player.includes("`") || parseInt(args[1]) == NaN) return "Invalid syntax. Check `!rb help` for information.";
+
     trackerHelper(player, Math.abs(args[1] ? args[1] : 1));
-
-    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
-
     if (trackers.get(player).value()) {
         const tracker = trackers.get(player).value();
         return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
@@ -54,10 +53,9 @@ function addRollback(args) {
 function removeRollback(args) {
     const player = args[0];
 
+    if (!player || player.includes("`") || parseInt(args[1]) == NaN) return "Invalid syntax. Check `!rb help` for information.";
+
     trackerHelper(player, Math.abs(args[1] ? args[1] : 1) * -1);
-
-    if (!player || player.includes("`")) return "Invalid syntax. Check `!rb help` for information.";
-
     if (trackers.get(player).value()) {
         const tracker = trackers.get(player).value();
         return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
