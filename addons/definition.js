@@ -2,17 +2,17 @@ const https = require("https");
 const { MessageAttachment } = require("discord.js");
 
 module.exports.message = (client, message) => {
-	const prefix = "!";
-	const aliases = ["definition", "def", "identify", "dictionary", "meaning", "define"];
+    const prefix = "!";
+    const aliases = ["definition", "def", "identify", "dictionary", "meaning", "define"];
 
-	const command = message.content.toLowerCase().split(" ")[0].slice(1);
-	const args = message.content.split(" ").slice(1);
+    const command = message.content.toLowerCase().split(" ")[0].slice(1);
+    const args = message.content.split(" ").slice(1);
 
-	if (!(message.content.toLowerCase().startsWith(prefix) && aliases.includes(command))) return;
-	if (args.length == 0) return message.reply("Please provide a word");
-	if (args.length > 1) return message.reply("Please provide only one word");
+    if (!(message.content.toLowerCase().startsWith(prefix) && aliases.includes(command))) return;
+    if (args.length == 0) return message.reply("Please provide a word");
+    if (args.length > 1) return message.reply("Please provide only one word");
 
-	const word = args[0].toLowerCase();
+    const word = args[0].toLowerCase();
 
 	https
 		.get(`https://api.dictionaryapi.dev/api/v2/entries/en_US/${word}`, res => {
@@ -22,10 +22,10 @@ module.exports.message = (client, message) => {
 				data += chunk;
 			});
 
-			res.on("end", () => {
-				if (JSON.parse(data).title) return message.reply(`**Could not find definition for: \`${word}\`**`);
+            res.on("end", () => {
+                if (JSON.parse(data).title) return message.reply(`**Could not find definition for: \`${word}\`**`);
 
-				const result = JSON.parse(data)[0];
+                const result = JSON.parse(data)[0];
 
 				let embed = {
 					color: Math.floor(Math.random() * 16777215) + 1,
@@ -50,5 +50,5 @@ module.exports.message = (client, message) => {
 			return message.reply("An error occured while making the request to the API");
 		});
 
-	return;
+    return;
 };
