@@ -13,7 +13,8 @@ const trackers = low(adapter);
 
 trackers.defaults({}).write();
 
-schedule.scheduleJob("0 0 * * *", () => {
+schedule.scheduleJob({ minute: 0, hour: 0, tz: "America/Chicago" }, () => {
+    console.log("Clearing database.");
     adapter.write({});
 });
 
@@ -151,6 +152,13 @@ module.exports.message = async (client, msg) => {
             case "clear":
                 args.shift();
                 msg.channel.send(clearRollbacks(args));
+                break;
+            case "debug":
+                if (!msg.member.hasPermission("MANAGE_GUILD")) {
+                    msg.react("⚠️");
+                    break;
+                }
+                msg.channel.send(`\`\`\`json\n${JSON.stringify(trackers.read().value())}\n\`\`\``);
                 break;
 
             default:
