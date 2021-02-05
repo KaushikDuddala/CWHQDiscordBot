@@ -154,11 +154,24 @@ module.exports.message = async (client, msg) => {
                 msg.channel.send(clearRollbacks(args));
                 break;
             case "debug":
+                args.shift();
                 if (!msg.member.hasPermission("MANAGE_GUILD")) {
                     msg.react("⚠️");
                     break;
                 }
-                msg.channel.send(`\`\`\`json\n${JSON.stringify(trackers.read().value())}\n\`\`\``);
+                switch (args[0]) {
+                    case "cleardb":
+                        adapter.write({});
+                        msg.channel.send("All rollbacks cleared from database.");
+                        break;
+                    case "getdb":
+                    case undefined:
+                        msg.channel.send(`\`\`\`json\n${JSON.stringify(trackers.read().value())}\n\`\`\``);
+                        break;
+                    default:
+                        msg.react("⚠️");
+                        break;
+                }
                 break;
 
             default:
