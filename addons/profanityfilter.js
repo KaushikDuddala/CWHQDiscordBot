@@ -148,10 +148,21 @@ exports.message = async function (client, msg) {
                 // console.log("Profanity probability: " + probability);
                 if (probability > 0.85) {
                     msg.delete();
-                    msg.reply(
-                        "Please do not be profane! Probability: " + Math.round(probability * 1000) / 10 + "%. Thank you! `@bot`"
-                    ).then(message => message.delete({ timeout: 6000 }));
-                    msg.guild.channels.cache
+                    if (channel.name == "s-p-a-c-e") {
+                        msg.reply(
+                            "P l e a s e  d o  n o t  b e  p r o f a n e !  P r o b a b i l i t y : " + Math.round(probability * 1000) / 10 + " % .  T h a n k  y o u ! '@bot'"
+                        ).then(message => message.delete({ timeout: 6000 }));
+                        msg.guild.channels.cache
+                        .find(chan => chan.name === "admin-log")
+                        .send(
+                            `Message: \`${msg.content}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
+                                msg.author
+                            }.`
+                     else:
+                        msg.reply(
+                            "Please do not be profane! Probability: " + Math.round(probability * 1000) / 10 + "%. Thank you! `@bot`"
+                        ).then(message => message.delete({ timeout: 6000 }));
+                        msg.guild.channels.cache
                         .find(chan => chan.name === "admin-log")
                         .send(
                             `Message: \`${msg.content}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
