@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const FilterStatus = { enabled: false, members: ["477264722991906836"] };
 
 var exports = module.exports;
-const whitelist = ["damn", "dammit", "suck", "cursed", "idiot", "jerk"];
+const whitelist = ["damn", "dammit", "suck", "cursed", "idiot", "jerk", "darn"];
 
 exports.init = function (client) {
     client.on("presenceUpdate", function (oldPresence, newPresence) {
@@ -150,9 +150,8 @@ exports.message = async function (client, msg) {
                     msg.delete();
                     if (msg.channel.name == "s-p-a-c-e") {
                         msg.reply(
-                            "Please do not be profane! Probability: " +
-                                Math.round(probability * 1000) / 10 +
-                                "%. Thank you! `@bot`".split("").join(" ")
+                            `Please do not be profane! Probability: ${Math.round(probability * 1000) / 10}%. Thank you!`.split("").join(" ") +
+                                "  `@bot`"
                         ).then(message => message.delete({ timeout: 6000 }));
                     } else {
                         msg.reply(
@@ -166,7 +165,8 @@ exports.message = async function (client, msg) {
                             `${msg.url}: \`${msg.cleanContent}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
                                 msg.author
                             }.`
-                        );
+                        )
+                        .suppressEmbeds(true);
                 }
             })
             .catch(err => console.log(err));
