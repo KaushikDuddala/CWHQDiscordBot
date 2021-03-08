@@ -13,7 +13,7 @@ const trackers = low(adapter);
 
 trackers.defaults({}).write();
 
-schedule.scheduleJob({ minute: 0, hour: 0, tz: "America/Chicago" }, () => {
+schedule.scheduleJob({ minute: 0, hour: 0, dayOfWeek: 0, tz: "America/Chicago" }, () => {
     console.log("Clearing database.");
     adapter.write({});
 });
@@ -46,9 +46,9 @@ function addRollback(args) {
     trackerHelper(player, Math.abs(args[1] ? args[1] : 1));
     if (trackers.get(player).value()) {
         const tracker = trackers.get(player).value();
-        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
+        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last week.`;
     } else {
-        return `Player \`${player}\` has had no rollbacks in the last 24 hours.`;
+        return `Player \`${player}\` has had no rollbacks in the last week.`;
     }
 }
 function removeRollback(args) {
@@ -59,9 +59,9 @@ function removeRollback(args) {
     trackerHelper(player, Math.abs(args[1] ? args[1] : 1) * -1);
     if (trackers.get(player).value()) {
         const tracker = trackers.get(player).value();
-        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
+        return `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last week.`;
     } else {
-        return `Player \`${player}\` has had no rollbacks in the last 24 hours.`;
+        return `Player \`${player}\` has had no rollbacks in the last week.`;
     }
 }
 function clearRollbacks(args) {
@@ -81,9 +81,9 @@ async function getPlayerRollbacks(message, player, handleEvents = true) {
 
     if (trackers.get(player).value()) {
         const tracker = trackers.get(player).value();
-        result = `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last 24 hours.`;
+        result = `Player \`${player}\` has had **${tracker.rollbacks}** rollback${tracker.rollbacks > 1 ? "(s)" : ""} in the last week.`;
     } else {
-        result = `Player \`${player}\` has had no rollbacks in the last 24 hours.`;
+        result = `Player \`${player}\` has had no rollbacks in the last week.`;
     }
 
     if (handleEvents) {
@@ -250,7 +250,7 @@ module.exports.message = async (client, msg) => {
 //                 if(user) {
 //                     const tracker = trackers.get(user.id);
 //                     if(!trackers.has(user.id)) {
-//                         msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past 24 hours.");
+//                         msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past week.");
 //                     } else {
 //                         if(tracker.rollbacks > 0) {
 //                             tracker.rollbacks--;
@@ -271,9 +271,9 @@ module.exports.message = async (client, msg) => {
 //             if(user) {
 //                 const tracker = trackers.get(user.id);
 //                 if(trackers.has(user.id)) {
-//                     msg.channel.send("`" + user.user.tag + "` has had " + tracker.rollbacks + " rollback(s) in the last 24 hours.");
+//                     msg.channel.send("`" + user.user.tag + "` has had " + tracker.rollbacks + " rollback(s) in the last week.");
 //                 } else {
-//                     msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past 24 hours.");
+//                     msg.channel.send("`" + user.user.tag + "` has had no rollbacks in the past week.");
 //                 }
 
 //             } else {
