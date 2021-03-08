@@ -6,7 +6,7 @@ const fetch = require("node-fetch");
 const FilterStatus = { enabled: false, members: ["477264722991906836"] };
 
 var exports = module.exports;
-const whitelist = ["damn", "dammit", "suck", "cursed", "idiot"];
+const whitelist = ["damn", "dammit", "suck", "cursed", "idiot", "jerk"];
 
 exports.init = function (client) {
     client.on("presenceUpdate", function (oldPresence, newPresence) {
@@ -123,7 +123,7 @@ exports.message = async function (client, msg) {
     let sendText = msg.content;
     if (!sendText) return;
     whitelist.forEach(item => {
-        sendText = sendText.toLowerCase().replace(item, "");
+        sendText = sendText.toLowerCase().replace(new RegExp(item, "g"), "");
     });
     if (process.env.PERSPECTIVE_API_KEY) {
         fetch(`https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=${process.env.PERSPECTIVE_API_KEY}`, {
@@ -148,13 +148,22 @@ exports.message = async function (client, msg) {
                 // console.log("Profanity probability: " + probability);
                 if (probability > 0.85) {
                     msg.delete();
-                    msg.reply(
-                        "Please do not be profane! Probability: " + Math.round(probability * 1000) / 10 + "%. Thank you! `@bot`"
-                    ).then(message => message.delete({ timeout: 6000 }));
+                    if (msg.channel.name == "s-p-a-c-e") {
+                        msg.reply(
+                            "Please do not be profane! Probability: " +
+                                Math.round(probability * 1000) / 10 +
+                                "%. Thank you! `@bot`".split("").join(" ")
+                        ).then(message => message.delete({ timeout: 6000 }));
+                    } else {
+                        msg.reply(
+                            "Please do not be profane! Probability: " + Math.round(probability * 1000) / 10 + "%. Thank you! `@bot`"
+                        ).then(message => message.delete({ timeout: 6000 }));
+                    }
+
                     msg.guild.channels.cache
                         .find(chan => chan.name === "admin-log")
                         .send(
-                            `Message: \`${msg.content}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
+                            `${msg.url}: \`${msg.cleanContent}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
                                 msg.author
                             }.`
                         );
