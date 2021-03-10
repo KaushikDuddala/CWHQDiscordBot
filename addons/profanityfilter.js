@@ -162,7 +162,7 @@ exports.message = async function (client, msg) {
                     msg.guild.channels.cache
                         .find(chan => chan.name === "admin-log")
                         .send(
-                            `${msg.url}: \`${msg.cleanContent}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
+                            `<${msg.url}>: \`${msg.cleanContent}\` - \`${Math.round(probability * 1000) / 10}%\` has been said in ${msg.channel} by ${
                                 msg.author
                             }.`
                         )
