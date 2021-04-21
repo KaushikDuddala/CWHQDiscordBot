@@ -35,3 +35,4 @@ Currently, the bot has the ability to support addons, and to create one, first t
 - **Jokes Addon** by Qursch
 - **Clear Command** by Razboy20
 - **Definition Command** by Martin M.
+- **S P A C E   Filter** by Martin M.
