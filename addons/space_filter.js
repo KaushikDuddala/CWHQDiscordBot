@@ -7,7 +7,9 @@ module.exports.message = function(client, msg) {
 		const filtered = element.replace(" ", "");
 
 		if(filtered.length > 1) {
-			return msg.delete();
+			if(!filtered.toLowerCase().startsWith("https://") && !filtered.toLowerCase().startsWith("http://") && !filtered.match(/^<[@#&]|(@&)\d+>$/)) {
+				return msg.delete();
+			}
 		}
 	});
 };
