@@ -1,6 +1,7 @@
 module.exports.message = function (client, msg) {
     const space_channel = "603336862878138408";
     if (msg.channel.id != space_channel) return;
+    if (msg.author.bot) return;
     const split_msg = msg.content.split(" ");
 
     split_msg.forEach(async filtered => {
