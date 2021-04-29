@@ -146,7 +146,7 @@ exports.message = async function (client, msg) {
                 if (!result.attributeScores) return;
                 const probability = result.attributeScores.PROFANITY.summaryScore.value;
                 // console.log("Profanity probability: " + probability);
-                if (probability > 0.85) {
+                if (probability > 0.9) {
                     msg.delete();
                     if (msg.channel.name == "s-p-a-c-e") {
                         msg.reply(
