@@ -19,8 +19,7 @@ module.exports.message = function (client, msg) {
 
                 return true;
             }
-
-            return false;
         }
+        return false;
     });
 };
