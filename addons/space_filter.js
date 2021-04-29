@@ -1,10 +1,10 @@
-module.exports.message = function (client, msg) {
+module.exports.message = async function (client, msg) {
     const space_channel = "603336862878138408";
     if (msg.channel.id != space_channel) return;
     if (msg.author.bot) return;
     const split_msg = msg.content.split(" ");
 
-    split_msg.find(async filtered => {
+    for (let filtered in split_msg) {
         if (filtered.length > 1) {
             if (
                 !filtered.toLowerCase().startsWith("https://") &&
@@ -17,9 +17,8 @@ module.exports.message = function (client, msg) {
                     _msg.delete();
                 }, 3000);
 
-                return true;
+                break;
             }
         }
-        return false;
-    });
+    }
 };
