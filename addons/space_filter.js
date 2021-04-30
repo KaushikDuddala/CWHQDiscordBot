@@ -4,7 +4,8 @@ module.exports.message = async function (client, msg) {
     if (msg.author.bot) return;
     const split_msg = msg.content.split(" ");
 
-    for (let filtered in split_msg) {
+    for (let i in split_msg) {
+        const filtered = split_msg[i];
         if (filtered.length > 1) {
             if (
                 !filtered.toLowerCase().startsWith("https://") &&
