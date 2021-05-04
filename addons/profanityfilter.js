@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const fetch = require("node-fetch");
+const removeAccents = require("remove-accents");
 
 const FilterStatus = { enabled: false, members: ["477264722991906836"] };
 
@@ -25,7 +26,7 @@ exports.init = function (client) {
                         },
                         body: JSON.stringify({
                             comment: {
-                                text: status
+                                text: removeAccents(status)
                             },
                             requestedAttributes: {
                                 PROFANITY: {}
@@ -132,7 +133,7 @@ exports.message = async function (client, msg) {
             },
             body: JSON.stringify({
                 comment: {
-                    text: sendText
+                    text: removeAccents(sendText)
                 },
                 requestedAttributes: {
                     PROFANITY: {}
