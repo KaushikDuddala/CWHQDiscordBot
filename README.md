@@ -37,3 +37,4 @@ Currently, the bot has the ability to support addons, and to create one, first t
 - **Rollback Tracker** by Qursch and Razboy20
 - **Definition Command** by Martin M.
 - **S P A C E   Filter** by Martin M.
+- **Report System** by Kaushik D.
