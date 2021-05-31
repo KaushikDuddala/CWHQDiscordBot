@@ -4,7 +4,8 @@ exports.message = function(client, msg) {
     //Checking if message is to open a report
 	if (msg.content === '!report') {
         const user = message.author.id; //assigning user var for easier access
-        const name = "ticket-" + user; //making a name for the new channel
+	let userName = client.users.cache.get(user); //making the name the users name instead of their ID
+        const name = "ticket-" + userName.username; //making a name for the new channel
         if(message.guild.channels.cache.find(ch => ch.name == name)){
             message.channel.send("You have already opened a ticket") //making sure they dont have a ticket already open for anti-spam
         }else{
@@ -30,7 +31,9 @@ exports.message = function(client, msg) {
      }
     //checking if message is to close the ticket
     }else if(msg.content = '!close'){
-        if(!message.member.roles.cache.some((role) => role.name === 'Mod')) return message.channel.send("Only a moderator can end a ticket!") //making it so only mods can do it
-        if(message.member.roles.cache.some((role) => role.name === 'Mod')) message.channnel.delete() //deleting the channel, probably going to make it so that it only works only channels starting with "ticket" in case a mod accidently does it in general or something
+        const user = client.users.cache.get(message.author.id);
+ 	if(!message.member.roles.cache.has("848736231197638667")) return message.channel.send("Only a moderator can end a ticket!") //making it so only mods can do it
+        if(message.member.roles.cache.has("848736231197638667")) return message.channel.delete() //deleting the channel, probably going to make it so that it only works only channels starting with "ticket" in case a mod accidently does it in general or something
+    }
     }
 };
