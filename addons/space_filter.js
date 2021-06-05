@@ -1,5 +1,5 @@
 module.exports.message = async function (client, msg) {
-    const space_channel = "850514018426814474";
+    const space_channel = "603336862878138408";
     if (message.channel.id != space_channel) return;
     if (message.author.bot) return;
     const split_message = message.content.split(" ");
