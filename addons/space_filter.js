@@ -17,7 +17,7 @@ module.exports.message = async function (client, msg) {
               link = true
             }else if (filtered.match(/^<@\d+>$|^<@!\d+>$/)){
               const user_id = filtered.match(/\d+/)
-              const Guild = client.guilds.cache.get("822201265379475497");
+              const Guild = client.guilds.cache.get("603301961584082994");
               const Members = Guild.members.cache.map(member => member.id);
               if (Members.includes(user_id[0])){
                 personPing = true
