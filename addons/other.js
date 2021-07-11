@@ -2,7 +2,7 @@ var exports = module.exports;
 
 prefix = '-';
 
-adminRoles = [ 'Mages', 'Moderator', 'Admin', 'Support troops' ];
+adminRoles = require("./resources/config.json").roles.admin;
 
 exports.message = function(client, msg) {
 	if (msg.channel.type !== 'text') return;

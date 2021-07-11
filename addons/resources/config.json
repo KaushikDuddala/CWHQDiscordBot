@@ -2,5 +2,8 @@
 	"server_id": "603301961584082994",
 	"channels": {
 		"space": "603336862878138408"
+	},
+	"roles": {
+		"admin": ["Mages", "Moderator", "Admin", "Support troops"]
 	}
 }

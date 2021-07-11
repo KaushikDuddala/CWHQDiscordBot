@@ -1,5 +1,5 @@
 module.exports.message = async function (client, msg) {
-    const space_channel = "603336862878138408";
+    const space_channel = require('resources/config.json').channels.space;
     if (msg.channel.id != space_channel) return;
     if (msg.author.bot) return;
     const split_msg = msg.content.split(" ");
