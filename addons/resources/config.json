@@ -1,0 +1,28 @@
+{
+	"server_id": "603301961584082994",
+	"mee6_id": "159985870458322944",
+	"channels": {
+		"space": "603336862878138408"
+	},
+	"roles": {
+		"admin": ["Mages", "Moderator", "Admin", "Support troops"]
+	},
+	"ranks": [
+		{
+			"name": "Apprentice",
+			"level": 0
+		},
+		{
+			"name": "Spell Caster",
+			"level": 10
+		},
+		{
+			"name": "KoDeWiSaRd",
+			"level": 30
+		},
+		{
+			"name": "Grandmaster",
+			"level": 45
+		}
+	]
+}
